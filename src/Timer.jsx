@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import * as helpers from './helpers'
 
 class Timer extends React.Component {
+  handleRemoveClick = () => {
+    this.props.onRemoveClick(this.props.id);
+  };
+  
   render() {
     const elapsedString = helpers.renderElapsedString(this.props.elapsed);
 
@@ -26,7 +30,10 @@ class Timer extends React.Component {
             >
               <i className='edit icon' />
             </span>
-            <span className='right floated trash icon'>
+            <span
+              className='right floated trash icon'
+              onClick= { this.handleRemoveClick }
+            >
               <i className='trash icon' />
             </span>
           </div>

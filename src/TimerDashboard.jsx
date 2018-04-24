@@ -29,6 +29,10 @@ class TimersDashboard extends React.Component {
     this.createTimer(timer);
   }
 
+  handleRemoveClick = (timerId) => {
+    this.removeTimer(timerId);
+  }
+
   handleEditFormSubmit = (updatedTimer) => {
     this.updateTimer(updatedTimer);
   };
@@ -37,6 +41,14 @@ class TimersDashboard extends React.Component {
     const t = helpers.newTimer(timer);
     this.setState({
       timers: this.state.timers.concat(t),
+    });
+  }
+
+  removeTimer = (timerId) => {
+    this.setState({
+      timers: this.state.timers.filter(t => (
+        t.id !== timerId
+      ))
     });
   }
 
@@ -63,6 +75,7 @@ class TimersDashboard extends React.Component {
           <EditableTimerList
             timers={this.state.timers}
             onFormSubmit={this.handleEditFormSubmit}
+            onRemoveClick={this.handleRemoveClick}
           />
           <ToggleableTimerForm
             onFormSubmit={this.handleCreateFromSubmit}
