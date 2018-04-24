@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TimerForm from './TimerForm'
 
 class ToggleableTimerForm extends React.Component {

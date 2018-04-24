@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import EditableTimer from './EditableTimer';
 
 
@@ -14,6 +14,8 @@ class EditableTimerList extends React.Component {
         runningSince={timer.runningSince}
         onFormSubmit={this.props.onFormSubmit}
         onRemoveClick={this.props.onRemoveClick}
+        onStartClick={this.props.onStartClick}
+        onStopClick={this.props.onStopClick}
       />
     ));
 

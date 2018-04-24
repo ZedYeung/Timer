@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import EditableTimerList from './EditableTimerList';
 import ToggleableTimerForm from './ToggleableTimerForm';
 import uuid from 'uuid-v4'
@@ -37,6 +37,14 @@ class TimersDashboard extends React.Component {
     this.updateTimer(updatedTimer);
   };
 
+  handleStartClick = (timerId) => {
+      this.startTimer(timerId);
+    };
+
+  handleStopClick = (timerId) => {
+    this.stopTimer(timerId);
+  };
+
   createTimer = (timer) => {
     const t = helpers.newTimer(timer);
     this.setState({
@@ -67,6 +75,40 @@ class TimersDashboard extends React.Component {
     });
   };
 
+  startTimer = (timerId) => {
+    const now = Date.now();
+
+    this.setState({
+      timers: this.state.timers.map((timer) => {
+        if (timer.id === timerId) {
+          return Object.assign({}, timer, {
+            runningSince: now,
+          });
+        } else {
+          return timer;
+        }
+      }),
+    });
+  };
+
+  stopTimer = (timerId) => {
+    const now = Date.now();
+
+    this.setState({
+      timers: this.state.timers.map((timer) => {
+        if (timer.id === timerId) {
+          const lastElapsed = now - timer.runningSince;
+          return Object.assign({}, timer, {
+            elapsed: timer.elapsed + lastElapsed,
+            runningSince: null,
+          });
+        } else {
+          return timer;
+        }
+      }),
+    });
+  };
+
 
   render() {
     return (
@@ -76,6 +118,8 @@ class TimersDashboard extends React.Component {
             timers={this.state.timers}
             onFormSubmit={this.handleEditFormSubmit}
             onRemoveClick={this.handleRemoveClick}
+            onStartClick={this.handleStartClick}
+            onStopClick={this.handleStopClick}
           />
           <ToggleableTimerForm
             onFormSubmit={this.handleCreateFromSubmit}
