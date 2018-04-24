@@ -3,34 +3,31 @@ import EditableTimerList from './EditableTimerList';
 import ToggleableTimerForm from './ToggleableTimerForm';
 import uuid from 'uuid-v4'
 import * as helpers from './helpers'
+import * as api from './api'
 
 
 class TimersDashboard extends React.Component {
   state = {
-    timers: [
-      {
-        title: 'Learn React',
-        project: 'Fullstack',
-        id: uuid(),
-        elapsed: 5456099,
-        runningSince: Date.now(),
-      },
-      {
-        title: 'Read PRML',
-        project: 'Machine Learning',
-        id: uuid(),
-        elapsed: 1273998,
-        runningSince: null,
-      },
-    ]
+    timers: []
+  }
+
+  componentDidMount() {
+    this.loadTimers();
+    setInterval(this.getTimers, 5000);
+  }
+
+  loadTimers = () => {
+    api.getTimers().then((timers) => (
+      this.setState({ timers })
+    ))
   }
 
   handleCreateFromSubmit = (timer) => {
     this.createTimer(timer);
   }
 
-  handleRemoveClick = (timerId) => {
-    this.removeTimer(timerId);
+  handleDeleteClick = (timerId) => {
+    this.deleteTimer(timerId);
   }
 
   handleEditFormSubmit = (updatedTimer) => {
@@ -50,14 +47,18 @@ class TimersDashboard extends React.Component {
     this.setState({
       timers: this.state.timers.concat(t),
     });
+
+    api.createTimer(t);
   }
 
-  removeTimer = (timerId) => {
+  deleteTimer = (timerId) => {
     this.setState({
       timers: this.state.timers.filter(t => (
         t.id !== timerId
       ))
     });
+
+    api.deleteTimer({ id: timerId });
   }
 
   updateTimer = (updatedTimer) => {
@@ -73,6 +74,8 @@ class TimersDashboard extends React.Component {
         }
       }),
     });
+
+    api.updateTimer(updatedTimer);
   };
 
   startTimer = (timerId) => {
@@ -89,6 +92,11 @@ class TimersDashboard extends React.Component {
         }
       }),
     });
+
+    api.startTimer({
+      id: timerId,
+      start: now,
+    })
   };
 
   stopTimer = (timerId) => {
@@ -107,6 +115,11 @@ class TimersDashboard extends React.Component {
         }
       }),
     });
+
+    api.stopTimer({
+      id: timerId,
+      stop: now,
+    })
   };
 
 
@@ -117,7 +130,7 @@ class TimersDashboard extends React.Component {
           <EditableTimerList
             timers={this.state.timers}
             onFormSubmit={this.handleEditFormSubmit}
-            onRemoveClick={this.handleRemoveClick}
+            onDeleteClick={this.handleDeleteClick}
             onStartClick={this.handleStartClick}
             onStopClick={this.handleStopClick}
           />

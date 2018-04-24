@@ -19,8 +19,8 @@ class Timer extends React.Component {
     this.props.onStopClick(this.props.id);
   };
 
-  handleRemoveClick = () => {
-    this.props.onRemoveClick(this.props.id);
+  handleDeleteClick = () => {
+    this.props.onDeleteClick(this.props.id);
   };
 
   render() {
@@ -52,7 +52,7 @@ class Timer extends React.Component {
             </span>
             <span
               className='right floated trash icon'
-              onClick= { this.handleRemoveClick }
+              onClick= { this.handleDeleteClick }
             >
               <i className='trash icon' />
             </span>

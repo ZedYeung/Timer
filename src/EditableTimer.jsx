@@ -48,7 +48,7 @@ class EditableTimer extends React.Component {
           elapsed={this.props.elapsed}
           runningSince={this.props.runningSince}
           onEditClick={this.handelEditClick}
-          onRemoveClick={this.props.onRemoveClick}
+          onDeleteClick={this.props.onDeleteClick}
           onStartClick={this.props.onStartClick}
           onStopClick={this.props.onStopClick}
         />
