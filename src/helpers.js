@@ -4,7 +4,7 @@ import uuid from 'uuid-v4';
     const timer = {
       title: attrs.title || 'Timer',
       project: attrs.project || 'Project',
-      id: uuid(), // eslint-disable-line no-undef
+      id: uuid(),
       elapsed: 0,
     };
 
