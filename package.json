@@ -1,5 +1,5 @@
 {
-  "name": "timer",
+  "name": "timer-server",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,17 +8,9 @@
     "express": "^4.16.3",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "react-scripts": "1.1.4",
-    "semantic-ui-css": "^2.3.1",
-    "semantic-ui-react": "^0.79.1",
-    "uuid-v4": "^0.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && yarn --production=false && yarn run build"
   }
 }
