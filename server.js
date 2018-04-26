@@ -22,9 +22,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
   next();
 });
 
@@ -44,7 +41,6 @@ app.get('/api/timers', (req, res) => {
 app.post('/api/timers', (req, res) => {
   const newTimer =new Timer ({
     title: req.body.title,
-    project: req.body.project,
     id: req.body.id,
     elapsed: 0,
     runningSince: null,
@@ -110,8 +106,7 @@ app.put('/api/timers', (req, res) => {
   Timer.findOneAndUpdate(
     { id: req.body.id },
     {
-      title: req.body.title,
-      project: req.body.project
+      title: req.body.title
     }
   )
   .then((result) => {

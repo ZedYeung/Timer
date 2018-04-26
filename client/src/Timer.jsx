@@ -34,16 +34,6 @@ class Timer extends React.Component {
         <div className='content'>
           <div className='header'>
             {this.props.title}
-          </div>
-          <div className='meta'>
-            {this.props.project}
-          </div>
-          <div className='center aligned description'>
-            <h2>
-              {elapsedString}
-            </h2>
-          </div>
-          <div className='extra content'>
             <span
               className='right floated edit icon'
               onClick={ this.props.onEditClick }
@@ -56,6 +46,11 @@ class Timer extends React.Component {
             >
               <i className='trash icon' />
             </span>
+          </div>
+          <div className='center aligned description'>
+            <h2>
+              {elapsedString}
+            </h2>
           </div>
         </div>
         <TimerActionButton

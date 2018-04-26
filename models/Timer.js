@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
     "title": String,
-    "project": String,
     "elapsed": {
         type: Number,
         default: 0
