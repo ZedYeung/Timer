@@ -3,10 +3,16 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const mongoose = require('mongoose')
+const Timer = require('./models/Timer')
+const config = require('./config')
 
 const app = express();
 
-const DATA_FILE = path.join(__dirname, 'data.json');
+mongoose.connect(config.database)
+mongoose.connection.on('error', () => {
+  console.info('Error: Could not connect to MongoDB. Did you forget to run `mongod`?'.red);
+});
 
 app.use(cors())
 app.set('port', (process.env.PORT || 5001));
@@ -23,89 +29,119 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/timers', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    res.setHeader('Cache-Control', 'no-cache');
-    res.json(JSON.parse(data));
-  });
+  Timer.find({})
+    .then((result) => {
+      res.json(result)
+    })
+    .catch((err) => {
+      res.json({
+        sucess: false,
+        msg: err
+      })
+    })
 });
 
 app.post('/api/timers', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    const timers = JSON.parse(data);
-    const newTimer = {
-      title: req.body.title,
-      project: req.body.project,
-      id: req.body.id,
-      elapsed: 0,
-      runningSince: null,
-    };
-    timers.push(newTimer);
-    fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
-      res.setHeader('Cache-Control', 'no-cache');
-      res.json(timers);
-    });
+  const newTimer =new Timer ({
+    title: req.body.title,
+    project: req.body.project,
+    id: req.body.id,
+    elapsed: 0,
+    runningSince: null,
   });
+
+  newTimer.save()
+    .then((result) => {
+      res.json({
+        sucess: true,
+        msg: 'Successfully added new Timer!'
+      })
+    })
+    .catch((err) => {
+      res.json({
+        sucess: false,
+        msg: err
+      })
+    })
 });
 
 app.post('/api/timers/start', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    const timers = JSON.parse(data);
-    timers.forEach((timer) => {
-      if (timer.id === req.body.id) {
-        timer.runningSince = req.body.start;
-      }
-    });
-    fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
-      res.json({});
-    });
-  });
+  Timer.findOneAndUpdate(
+    { id: req.body.id },
+    { runningSince: req.body.start }
+  )
+  .then((result) => {
+    res.json({
+      sucess: true,
+      msg: 'Successfully start Timer!'
+    })
+  })
+  .catch((err) => {
+    res.json({
+      sucess: false,
+      msg: err
+    })
+  })
 });
 
 app.post('/api/timers/stop', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    const timers = JSON.parse(data);
-    timers.forEach((timer) => {
-      if (timer.id === req.body.id) {
-        const delta = req.body.stop - timer.runningSince;
-        timer.elapsed += delta;
-        timer.runningSince = null;
-      }
-    });
-    fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
-      res.json({});
-    });
-  });
+  Timer.findOne({ id: req.body.id }, (err, timer) => {
+      const delta = req.body.stop - timer.runningSince;
+      timer.elapsed += delta;
+      timer.runningSince = null;
+
+      timer.save()
+        .then((result) => {
+          res.json({
+            sucess: true,
+            msg: 'Successfully stop Timer!'
+          })
+        })
+        .catch((err) => {
+          res.json({
+            sucess: false,
+            msg: err
+          })
+        })
+    })
 });
 
 app.put('/api/timers', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    const timers = JSON.parse(data);
-    timers.forEach((timer) => {
-      if (timer.id === req.body.id) {
-        timer.title = req.body.title;
-        timer.project = req.body.project;
-      }
-    });
-    fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
-      res.json({});
-    });
-  });
+  Timer.findOneAndUpdate(
+    { id: req.body.id },
+    {
+      title: req.body.title,
+      project: req.body.project
+    }
+  )
+  .then((result) => {
+    res.json({
+      sucess: true,
+      msg: 'Successfully update Timer!'
+    })
+  })
+  .catch((err) => {
+    res.json({
+      sucess: false,
+      msg: err
+    })
+  })
 });
 
 app.delete('/api/timers', (req, res) => {
-  fs.readFile(DATA_FILE, (err, data) => {
-    let timers = JSON.parse(data);
-    timers = timers.reduce((memo, timer) => {
-      if (timer.id === req.body.id) {
-        return memo;
-      } else {
-        return memo.concat(timer);
-      }
-    }, []);
-    fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
-      res.json({});
-    });
-  });
+  Timer.findOneAndRemove({ id: req.body.id} )
+    .then((result) => {
+      res.json({
+        sucess: true,
+        msg: 'Successfully delete Timer!'
+      })
+    })
+    .catch((err) => {
+      res.json({
+        sucess: false,
+        msg: err
+      })
+    })
 });
 
 app.listen(app.get('port'), () => {

@@ -18,4 +18,4 @@ const schema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Timer', schema))
+module.exports = mongoose.model('Timer', schema)

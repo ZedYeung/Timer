@@ -1,7 +1,6 @@
 import React from 'react';
 import EditableTimerList from './EditableTimerList';
 import ToggleableTimerForm from './ToggleableTimerForm';
-import uuid from 'uuid-v4'
 import * as helpers from './helpers'
 import * as api from './api'
 
