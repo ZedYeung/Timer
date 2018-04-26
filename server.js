@@ -11,7 +11,15 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 app.use(cors())
 app.set('port', (process.env.PORT || 5001));
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+}
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+// app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
