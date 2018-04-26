@@ -19,6 +19,10 @@ class Timer extends React.Component {
     this.props.onStopClick(this.props.id);
   };
 
+  handleResetClick = () => {
+    this.props.onResetClick(this.props.id);
+  }
+
   handleDeleteClick = () => {
     this.props.onDeleteClick(this.props.id);
   };
@@ -53,11 +57,19 @@ class Timer extends React.Component {
             </h2>
           </div>
         </div>
-        <TimerActionButton
-          timerIsRunning={!!this.props.runningSince}
-          onStartClick={this.handleStartClick}
-          onStopClick={this.handleStopClick}
-        />
+        <div className='ui two bottom attached buttons'>
+          <TimerActionButton
+            timerIsRunning={!!this.props.runningSince}
+            onStartClick={this.handleStartClick}
+            onStopClick={this.handleStopClick}
+          />
+          <div
+            className='ui bottom attached blue basic button'
+            onClick={this.handleResetClick}
+          >
+            Reset
+          </div>
+        </div>
       </div>
     );
   }

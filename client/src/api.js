@@ -74,3 +74,16 @@ export const stopTimer = (data) => {
   .then( response => response.ok ? response.json() : Promise.reject(response.text()) )
   .catch( () => Promise.reject('get-fail') );
 }
+
+export const resetTimer = (data) => {
+  return fetch(`${api}/api/timers/reset`, {
+    method: 'post',
+    body: JSON.stringify(data),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  .then( response => response.ok ? response.json() : Promise.reject(response.text()) )
+  .catch( () => Promise.reject('get-fail') );
+}
