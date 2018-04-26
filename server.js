@@ -17,7 +17,12 @@ mongoose.connection.on('error', () => {
 app.use(cors())
 app.set('port', (process.env.PORT || 5001));
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+} else {
+  app.use('/', express.static(path.join(__dirname, 'public')));
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -102,6 +107,27 @@ app.post('/api/timers/stop', (req, res) => {
     })
 });
 
+app.post('/api/timers/reset', (req, res) => {
+  Timer.findOne({ id: req.body.id }, (err, timer) => {
+      timer.elapsed = 0;
+      timer.runningSince = null;
+
+      timer.save()
+        .then((result) => {
+          res.json({
+            sucess: true,
+            msg: 'Successfully stop Timer!'
+          })
+        })
+        .catch((err) => {
+          res.json({
+            sucess: false,
+            msg: err
+          })
+        })
+    })
+});
+
 app.put('/api/timers', (req, res) => {
   Timer.findOneAndUpdate(
     { id: req.body.id },
@@ -138,6 +164,12 @@ app.delete('/api/timers', (req, res) => {
       })
     })
 });
+
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  });
+}
 
 app.listen(app.get('port'), () => {
   console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console
