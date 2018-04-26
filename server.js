@@ -11,14 +11,16 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 app.use(cors())
 app.set('port', (process.env.PORT || 5001));
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+} else {
+  app.use('/', express.static(path.join(__dirname, 'public')));
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
   next();
 });
 
@@ -34,6 +36,7 @@ app.post('/api/timers', (req, res) => {
     const timers = JSON.parse(data);
     const newTimer = {
       title: req.body.title,
+      project: req.body.project,
       id: req.body.id,
       elapsed: 0,
       runningSince: null,
@@ -82,6 +85,7 @@ app.put('/api/timers', (req, res) => {
     timers.forEach((timer) => {
       if (timer.id === req.body.id) {
         timer.title = req.body.title;
+        timer.project = req.body.project;
       }
     });
     fs.writeFile(DATA_FILE, JSON.stringify(timers, null, 4), () => {
@@ -105,6 +109,12 @@ app.delete('/api/timers', (req, res) => {
     });
   });
 });
+
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  });
+}
 
 app.listen(app.get('port'), () => {
   console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console
