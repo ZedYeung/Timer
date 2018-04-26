@@ -1,4 +1,4 @@
-const api = 'http://localhost:5001'
+const api = process.env.PORT || 'http://localhost:5001'
 
 export const getTimers = () => {
   return fetch(`${api}/api/timers`, {
@@ -64,6 +64,19 @@ export const startTimer = (data) => {
 
 export const stopTimer = (data) => {
   return fetch(`${api}/api/timers/stop`, {
+    method: 'post',
+    body: JSON.stringify(data),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  .then( response => response.ok ? response.json() : Promise.reject(response.text()) )
+  .catch( () => Promise.reject('get-fail') );
+}
+
+export const resetTimer = (data) => {
+  return fetch(`${api}/api/timers/reset`, {
     method: 'post',
     body: JSON.stringify(data),
     headers: {
