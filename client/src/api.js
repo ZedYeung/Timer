@@ -1,4 +1,4 @@
-const api = 'http://localhost:5001'
+const api = process.env.PORT || 'http://localhost:5001'
 
 export const getTimers = () => {
   return fetch(`${api}/api/timers`, {
