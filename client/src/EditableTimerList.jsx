@@ -9,7 +9,6 @@ class EditableTimerList extends React.Component {
         key={timer.id}
         id={timer.id}
         title={timer.title}
-        project={timer.project}
         elapsed={timer.elapsed}
         runningSince={timer.runningSince}
         onFormSubmit={this.props.onFormSubmit}
