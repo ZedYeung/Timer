@@ -11,15 +11,11 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 app.use(cors())
 app.set('port', (process.env.PORT || 5001));
 
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('client/build'));
-}
+// if (process.env.NODE_ENV === 'production') {
+// 	app.use(express.static('client/build'));
+// }
 
-app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-
-// app.use('/', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -111,6 +107,10 @@ app.delete('/api/timers', (req, res) => {
       res.json({});
     });
   });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
 app.listen(app.get('port'), () => {
